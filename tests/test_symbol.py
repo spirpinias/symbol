@@ -1,8 +1,6 @@
 import pytest
 import polars as pl
 
-from mathutils import add, divide, add_one
-
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -15,14 +13,6 @@ int64 = st.integers(min_value=INT64_MIN, max_value=INT64_MAX)
 def test_add():
     assert add(2, 3) == 5
     assert add(-1, 1) == 0
-
-
-def test_divide():
-    assert divide(10, 2) == 5.0
-
-
-def test_add_one():
-    assert add_one(5) == 6
 
 
 @given(st.lists(int64, min_size=1))

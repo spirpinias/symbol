@@ -3,8 +3,11 @@ from dataclasses import field
 from dataclasses_json import dataclass_json, config
 
 from pathlib import Path
+import polars as pl
 
 from symbol.isokinetic import isokinetic_analysis
+from symbol.horizontal_hop import horizontal_hop_analysis
+from symbol.vertical_hop import vertical_hop_analysis
 
 
 @dataclass_json
@@ -14,7 +17,9 @@ class Symbol:
     """VALD Force Plate"""
 
     project_dir: str
-    samples: str = field(init=False, default=None)
+    weights: list[int] = field(init=False, default=None)
+    samples: list[str] = field(init=False, default=None)
+
     __kinetics_data: list[str] = field(
         default_factory=list,
         init=False,
@@ -57,9 +62,27 @@ class Symbol:
                 ''.join(filter(str.isdigit, x.name))
                 for x in samples
             ]
+
         except Exception as e:
             print(e)
 
     def run_isokinetic(self):
-        extended, flexed = isokinetic_analysis(files = self.__kinetics_data)
+        extended, flexed = isokinetic_analysis(
+            files=self.__kinetics_data
+        )
+
         return extended, flexed
+
+    def run_horizontal_hop(self):
+        combined = horizontal_hop_analysis(
+            samples=self.samples
+        )
+
+        return combined
+
+    def run_vertical_hop(self):
+        combined = vertical_hop_analysis(
+            samples=self.samples
+        )
+
+        return combined
