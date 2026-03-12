@@ -39,12 +39,21 @@ class Symbol:
     def __get_metadata(self):
         try:
             p = Path(self.project_dir)
-            self.__kinetics_data = list(p.glob('**/Isokinetic/*.csv'))
+            self.__kinetics_data = list(
+                p.glob('**/Isokinetic/*.csv')
+            )
             self.__horizontal_hop_data = list(
-                p.glob('**/SL_Horizontal_Hop/*.csv'))
-            self.__vertical_hop_data = list(p.glob('**/SL_Vertical_Hop/*.csv'))
-            samples = list(p.glob('SUBJECT*'))
-            self.samples = [''.join(filter(str.isdigit, x.name))
-                            for x in samples]
+                p.glob('**/SL_Horizontal_Hop/*.csv')
+            )
+            self.__vertical_hop_data = list(
+                p.glob('**/SL_Vertical_Hop/*.csv')
+            )
+            samples = list(
+                p.glob('SUBJECT*')
+            )
+            self.samples = [
+                ''.join(filter(str.isdigit, x.name))
+                for x in samples
+            ]
         except Exception as e:
             print(e)
