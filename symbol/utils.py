@@ -1,31 +1,50 @@
-from typing import List
+from dataclasses import dataclass
+from dataclasses import field
+from dataclasses_json import dataclass_json, config
+
 from pathlib import Path
 
-def get_sample_count(top_level: str) -> List[str]:
 
-    p = Path(top_level)
-    samples = list(p.glob('SUBJECT*'))
-    digits = [''.join(filter(str.isdigit, x.name)) for x in samples]
+@dataclass_json
+@dataclass
+class Symbol:
 
-    return digits
+    """VALD Force Plate"""
 
-def get_isokinetic_data(top_level: str) -> List[str]:
+    project_dir: str
+    samples: str = field(init=False, default=None)
+    __kinetics_data: list[str] = field(
+        default_factory=list,
+        init=False,
+        repr=False,
+        metadata=config(exclude=lambda x: True)
+    )
+    __horizontal_hop_data: list[str] = field(
+        default_factory=list,
+        init=False,
+        repr=False,
+        metadata=config(
+            exclude=lambda x: True)
+    )
+    __vertical_hop_data: list[str] = field(
+        default_factory=list,
+        init=False,
+        repr=False,
+        metadata=config(exclude=lambda x: True)
+    )
 
-    p = Path(top_level)
-    isokinetic_hip = list(p.glob('**/Isokinetic/*.csv'))
+    def __post_init__(self):
+        self.__get_metadata()
 
-    return isokinetic_hip
-
-def get_horizontal_hop_data(top_level: str) -> List[str]:
-
-    p = Path(top_level)
-    horizontal_hop = list(p.glob('**/SL_Horizontal_Hop/*.csv'))
-
-    return horizontal_hop
-
-def get_vertical_hop_data(top_level: str) -> List[str]:
-
-    p = Path(top_level)
-    vertical_hop = list(p.glob('**/SL_Vertical_Hop/*.csv'))
-
-    return vertical_hop
+    def __get_metadata(self):
+        try:
+            p = Path(self.project_dir)
+            self.__kinetics_data = list(p.glob('**/Isokinetic/*.csv'))
+            self.__horizontal_hop_data = list(
+                p.glob('**/SL_Horizontal_Hop/*.csv'))
+            self.__vertical_hop_data = list(p.glob('**/SL_Vertical_Hop/*.csv'))
+            samples = list(p.glob('SUBJECT*'))
+            self.samples = [''.join(filter(str.isdigit, x.name))
+                            for x in samples]
+        except Exception as e:
+            print(e)

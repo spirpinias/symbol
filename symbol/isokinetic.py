@@ -3,9 +3,10 @@ import polars as pl
 import numpy as np
 from os.path import basename
 
+
 def prepare_isokinetic(
         files: List[str],
-        ) -> Tuple[pl.DataFrame, pl.DataFrame]:
+) -> Tuple[pl.DataFrame, pl.DataFrame]:
 
     flexed = []
     extended = []
@@ -17,13 +18,13 @@ def prepare_isokinetic(
 
         dataset = pl.read_csv(file)
 
-        pounds = dataset[1,1]
+        pounds = dataset[1, 1]
         kilograms = np.float32(pounds) * 0.453592
-        dataset = dataset[72:,1:]
+        dataset = dataset[72:, 1:]
         headers = dataset.row(0)
-        dataset = dataset.rename(dict(zip(dataset.columns,headers)))
-        dataset = dataset[1:,:]
-        
+        dataset = dataset.rename(dict(zip(dataset.columns, headers)))
+        dataset = dataset[1:, :]
+
         dataset = dataset.with_columns(
             [
                 pl.col("SIDE").cast(pl.String),
@@ -42,15 +43,15 @@ def prepare_isokinetic(
             pl.lit(kilograms).alias("Kilograms"),
             (abs(pl.col("TORQUE") * 1.3558 / kilograms)).alias("Normalized"),
             (pl.col("mSec") / 1000).alias("Sec")
-            )
-        
+        )
+
         dataset = dataset.filter(pl.col("Rep") != "-")
 
         if hip_type == "Flexed":
             flexed.append(dataset)
         else:
             extended.append(dataset)
-    
+
     combined_flex = pl.concat(flexed)
     combined_extended = pl.concat(extended)
 
