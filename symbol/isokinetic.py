@@ -4,7 +4,7 @@ import numpy as np
 from os.path import basename
 
 
-def prepare_isokinetic(
+def isokinetic_analysis(
         files: List[str],
 ) -> Tuple[pl.DataFrame, pl.DataFrame]:
 

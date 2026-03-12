@@ -4,6 +4,8 @@ from dataclasses_json import dataclass_json, config
 
 from pathlib import Path
 
+from symbol.isokinetic import isokinetic_analysis
+
 
 @dataclass_json
 @dataclass
@@ -57,3 +59,7 @@ class Symbol:
             ]
         except Exception as e:
             print(e)
+
+    def run_isokinetic(self):
+        extended, flexed = isokinetic_analysis(files = self.__kinetics_data)
+        return extended, flexed
