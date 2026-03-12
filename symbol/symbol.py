@@ -3,7 +3,6 @@ from dataclasses import field
 from dataclasses_json import dataclass_json, config
 
 from pathlib import Path
-import polars as pl
 
 from symbol.isokinetic import isokinetic_analysis
 from symbol.horizontal_hop import horizontal_hop_analysis

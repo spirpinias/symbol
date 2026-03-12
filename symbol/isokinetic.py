@@ -1,8 +1,7 @@
 from typing import List, Tuple
 import polars as pl
-import numpy as np
 from os.path import basename
-
+import numpy as np
 
 def isokinetic_analysis(
         files: List[str],
