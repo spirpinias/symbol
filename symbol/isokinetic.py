@@ -1,7 +1,10 @@
+import logging
 from typing import List, Tuple
 import polars as pl
 from os.path import basename
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 def isokinetic_analysis(
         files: List[str],
@@ -14,6 +17,7 @@ def isokinetic_analysis(
 
         num_sample = basename(file).split('_')[0]
         hip_type = basename(file).split('_')[2].removesuffix(".csv")
+        logger.debug("Processing isokinetic file: %s (subject=%s, type=%s)", file, num_sample, hip_type)
 
         dataset = pl.read_csv(file)
 

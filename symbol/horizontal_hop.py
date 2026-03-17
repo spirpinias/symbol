@@ -1,8 +1,12 @@
+import logging
 import pandas as pd
 import polars as pl
 import numpy as np
 
 from typing import List
+from os.path import dirname, basename
+
+logger = logging.getLogger(__name__)
 
 
 def horizontal_hop_analysis(
@@ -11,18 +15,21 @@ def horizontal_hop_analysis(
 
     combined_dataset = []
 
-    for x in samples:
+    for file in samples:
+        logger.debug("Processing horizontal hop file: %s", file)
 
         dataset = pd.read_csv(
-            f'/Users/stephenpirpinias/Desktop/SYMBOL_ORIGINAL/SUBJECT{x}/SL_Horizontal_Hop/SL_Horizontal_Hop.csv',
+            file,
             skiprows=8,
         )
 
-        pounds_frame = pl.read_csv(
-            f'/Users/stephenpirpinias/Desktop/SYMBOL_ORIGINAL/SUBJECT{x}/Isokinetic/{x}_Hip_Flexed.csv',
-        )
+        pounds = pl.read_csv(
+            file,
+            truncate_ragged_lines=True
+        )[0,1]
 
-        pounds = pounds_frame[1, 1]
+        x = basename(dirname(dirname(file)))[-3:]
+
         kilograms = np.float32(pounds) * 0.453592
 
         dataset = dataset.drop(columns=["Unnamed: 7"])
